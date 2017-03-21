@@ -1,0 +1,885 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.ostenant.yoga.store.core.dao.product.ProductMapper">
+	<resultMap id="BaseResultMap" type="org.ostenant.yoga.store.core.bean.product.Product">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="no" property="no" jdbcType="VARCHAR" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="weight" property="weight" jdbcType="DOUBLE" />
+		<result column="is_new" property="isNew" jdbcType="BIT" />
+		<result column="is_hot" property="isHot" jdbcType="BIT" />
+		<result column="is_commend" property="isCommend" jdbcType="BIT" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="create_user_id" property="createUserId"
+			jdbcType="VARCHAR" />
+		<result column="check_time" property="checkTime" jdbcType="TIMESTAMP" />
+		<result column="check_user_id" property="checkUserId" jdbcType="VARCHAR" />
+		<result column="is_show" property="isShow" jdbcType="BIT" />
+		<result column="is_del" property="isDel" jdbcType="BIT" />
+		<result column="type_id" property="typeId" jdbcType="INTEGER" />
+		<result column="brand_id" property="brandId" jdbcType="INTEGER" />
+		<result column="keywords" property="keywords" jdbcType="VARCHAR" />
+		<result column="sales" property="sales" jdbcType="INTEGER" />
+		<result column="price" property="price" jdbcType="INTEGER" />
+		<result column="feature" property="feature" jdbcType="VARCHAR" />
+		<result column="color" property="color" jdbcType="VARCHAR" />
+		<result column="size" property="size" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<resultMap id="ImprovedResultMap" type="ProductResponse"
+		extends="ResultMapWithBLOBs">
+		<result column="url" property="url" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<resultMap id="ResultMapWithBLOBs"
+		type="org.ostenant.yoga.store.core.bean.product.ProductWithBLOBs" extends="BaseResultMap">
+		<result column="description" property="description" jdbcType="LONGVARCHAR" />
+		<result column="package_list" property="packageList" jdbcType="LONGVARCHAR" />
+	</resultMap>
+
+
+	<!-- ============================================================================================================ -->
+
+	<sql id="productSelector">
+		SELECT
+		<if test="fields != null">
+			${fields}
+		</if>
+		<if test="fields == null">
+			id,no,name,weight,is_new,is_hot,is_commend,create_time,create_user_id,check_time,check_user_id,is_show,is_del,type_id,brand_id,keywords,sales,description,package_list,feature,color,size
+		</if>
+		FROM bbs_product
+	</sql>
+	
+	
+	<sql id="productListWhere">
+		<where>
+			<if test="id != null">
+				and id=#{id}
+			</if>
+			<if test="no != null">
+				<if test="noLike == false">
+					and no=#{no}
+				</if>
+				<if test="noLike == true">
+					and no like "%"#{no}"%"
+				</if>
+			</if>
+			<if test="name != null">
+				<if test="nameLike == false">
+					and name=#{name}
+				</if>
+				<if test="nameLike == true">
+					and name like "%"#{name}"%"
+				</if>
+			</if>
+			<if test="weight != null">
+				and weight=#{weight}
+			</if>
+			<if test="isNew != null">
+				and is_new=#{isNew}
+			</if>
+			<if test="isHot != null">
+				and is_hot=#{isHot}
+			</if>
+			<if test="isCommend != null">
+				and is_commend=#{isCommend}
+			</if>
+			<if test="createTime != null">
+				and create_time=#{createTime}
+			</if>
+			<if test="createUserId != null">
+				<if test="createUserIdLike == false">
+					and create_user_id=#{createUserId}
+				</if>
+				<if test="createUserIdLike == true">
+					and create_user_id like "%"#{createUserId}"%"
+				</if>
+			</if>
+			<if test="checkTime != null">
+				and check_time=#{checkTime}
+			</if>
+			<if test="checkUserId != null">
+				<if test="checkUserIdLike == false">
+					and check_user_id=#{checkUserId}
+				</if>
+				<if test="checkUserIdLike == true">
+					and check_user_id like "%"#{checkUserId}"%"
+				</if>
+			</if>
+			<if test="isShow != null">
+				and is_show=#{isShow}
+			</if>
+			<if test="isDel != null">
+				and is_del=#{isDel}
+			</if>
+			<if test="typeId != null">
+				and type_id=#{typeId}
+			</if>
+			<if test="brandId != null">
+				and brand_id=#{brandId}
+			</if>
+			<if test="keywords != null">
+				<if test="keywordsLike == false">
+					and keywords=#{keywords}
+				</if>
+				<if test="keywordsLike == true">
+					and keywords like "%"#{keywords}"%"
+				</if>
+			</if>
+			<if test="sales != null">
+				and sales=#{sales}
+			</if>
+			<if test="description != null">
+				<if test="descriptionLike == false">
+					and description=#{description}
+				</if>
+				<if test="descriptionLike == true">
+					and description like "%"#{description}"%"
+				</if>
+			</if>
+			<if test="packageList != null">
+				<if test="packageListLike == false">
+					and package_list=#{packageList}
+				</if>
+				<if test="packageListLike == true">
+					and package_list like "%"#{packageList}"%"
+				</if>
+			</if>
+			<if test="feature != null">
+				<if test="featureLike == false">
+					and feature=#{feature}
+				</if>
+				<if test="featureLike == true">
+					and feature like "%"#{feature}"%"
+				</if>
+			</if>
+			<if test="color != null">
+				<if test="colorLike == false">
+					and color=#{color}
+				</if>
+				<if test="colorLike == true">
+					and color like "%"#{color}"%"
+				</if>
+			</if>
+			<if test="size != null">
+				<if test="sizeLike == false">
+					and size=#{size}
+				</if>
+				<if test="sizeLike == true">
+					and size like "%"#{size}"%"
+				</if>
+			</if>
+		</where>
+	</sql>
+
+
+	<!-- 前台条件 -->
+	<sql id="productWhereFront">
+		<where>
+			<if test="brandId != null">
+				and brand_id = #{brandId}
+			</if>
+			<if test="typeId != null">
+				and type_id = #{typeId}
+			</if>
+			<if test="featureId != null and featureName != null and featureName != '' ">
+				and feature like '%${featureName}%'
+			</if>
+			<if test="minPrice != null and maxPrice != null">
+				and price between #{minPrice} and #{maxPrice}
+			</if>
+			<if test="minPrice != null and maxPrice == null">
+				and price > #{minPrice} 
+			</if>
+			and is_show = 1
+		</where>
+	</sql>
+
+	<!-- 排序子句 -->
+	<sql id="productListOrder">
+		<if test="fieldOrders != null and fieldOrders.size > 0">
+			order by
+			<foreach collection="fieldOrders" separator="," item="fieldOrder">
+				${fieldOrder.field} ${fieldOrder.order}
+			</foreach>
+		</if>
+		<if test="fieldOrders == null">  
+			order by
+			is_hot DESC,sales DESC ,price DESC
+		</if>
+	</sql>
+
+	<sql id="productListLimit">
+		<if test="startRow != null">
+			limit #{startRow},#{pageSize}
+		</if>
+	</sql>
+
+	<select id="getProductByPage" parameterType="ProductQuery"
+		resultMap="BaseResultMap">
+		<include refid="productSelector" />
+		<include refid="productListWhere" />
+		<include refid="productListOrder" />
+		<include refid="productListLimit" />
+	</select>
+
+	<!-- ============================================================================================================ -->
+
+
+
+
+	<sql id="Table_Name">
+		bbs_product
+	</sql>
+
+	<sql id="Base_Column_List">
+		id, no, name, weight, is_new, is_hot, is_commend,
+		create_time,
+		create_user_id, check_time,
+		check_user_id, is_show, is_del,
+		type_id, brand_id, keywords, sales, feature, color,
+		price,
+		size
+	</sql>
+
+	<sql id="Blob_Column_List">
+		description, package_list
+	</sql>
+
+
+	<select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs"
+		parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		,
+		<include refid="Blob_Column_List" />
+		from
+		<include refid="Table_Name" />
+		where id = #{id,jdbcType=INTEGER}
+	</select>
+
+
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from
+		<include refid="Table_Name" />
+		where id = #{id,jdbcType=INTEGER}
+	</delete>
+
+
+	<sql id="queryForValue">
+		<if test="id != null">
+			and id = #{id,jdbcType=INTEGER}
+		</if>
+		<if test="no != null and no != '' ">
+			and no = #{no,jdbcType=VARCHAR}
+		</if>
+		<if test="name != null and name != '' ">
+			and name like "%"#{name,jdbcType=VARCHAR}"%"
+		</if>
+		<if test="weight != null">
+			and weight = #{weight,jdbcType=DOUBLE}
+		</if>
+		<if test="isNew != null">
+			and is_new = #{isNew,jdbcType=BIT}
+		</if>
+		<if test="isHot != null">
+			and is_hot = #{isHot,jdbcType=BIT}
+		</if>
+		<if test="isCommend != null">
+			and is_commend = #{isCommend,jdbcType=BIT}
+		</if>
+		<if test="createTime != null">
+			and create_time = #{createTime,jdbcType=TIMESTAMP}
+		</if>
+		<if test="createUserId != null and createUserId != '' ">
+			and create_user_id = #{createUserId,jdbcType=VARCHAR}
+		</if>
+		<if test="checkTime != null">
+			and check_time = #{checkTime,jdbcType=TIMESTAMP}
+		</if>
+		<if test="checkUserId != null and checkUserId != '' ">
+			and check_user_id = #{checkUserId,jdbcType=VARCHAR}
+		</if>
+		<if test="isShow != null">
+			and is_show = #{isShow,jdbcType=BIT}
+		</if>
+		<if test="isDel != null">
+			and is_del = #{isDel,jdbcType=BIT}
+		</if>
+		<if test="typeId != null">
+			and type_id = #{typeId,jdbcType=INTEGER}
+		</if>
+		<if test="brandId != null">
+			and brand_id = #{brandId,jdbcType=INTEGER}
+		</if>
+		<if test="keywords != null and keywords != '' ">
+			and keywords = #{keywords,jdbcType=VARCHAR}
+		</if>
+		<if test="sales != null">
+			and sales = #{sales,jdbcType=INTEGER}
+		</if>
+		<if test="price != null">
+			and price = #{price,jdbcType=INTEGER}
+		</if>
+		<if test="feature != null and feature != '' ">
+			and feature = #{feature,jdbcType=VARCHAR}
+		</if>
+		<if test="color != null and color != '' ">
+			and color = #{color,jdbcType=VARCHAR}
+		</if>
+		<if test="size != null and size != '' ">
+			and size = #{size,jdbcType=VARCHAR}
+		</if>
+	</sql>
+
+	<insert id="insert" parameterType="org.ostenant.yoga.store.core.bean.product.ProductWithBLOBs">
+		insert into
+		<include refid="Table_Name" />
+		(id, no, name,
+		weight, is_new, is_hot, is_commend,
+		create_time,
+		create_user_id, check_time,
+		check_user_id, is_show, is_del,
+		type_id,
+		brand_id, keywords,
+		sales, price, feature, color,
+		size, description,
+		package_list
+		)
+		values (#{id,jdbcType=INTEGER}, #{no,jdbcType=VARCHAR},
+		#{name,jdbcType=VARCHAR},
+		#{weight,jdbcType=DOUBLE},
+		#{isNew,jdbcType=BIT}, #{isHot,jdbcType=BIT},
+		#{isCommend,jdbcType=BIT},
+		#{createTime,jdbcType=TIMESTAMP},
+		#{createUserId,jdbcType=VARCHAR}, #{checkTime,jdbcType=TIMESTAMP},
+		#{checkUserId,jdbcType=VARCHAR}, #{isShow,jdbcType=BIT},
+		#{isDel,jdbcType=BIT},
+		#{typeId,jdbcType=INTEGER},
+		#{brandId,jdbcType=INTEGER}, #{keywords,jdbcType=VARCHAR},
+		#{sales,jdbcType=INTEGER}, #{price,jdbcType=INTEGER},
+		#{feature,jdbcType=VARCHAR}, #{color,jdbcType=VARCHAR},
+		#{size,jdbcType=VARCHAR}, #{description,jdbcType=LONGVARCHAR},
+		#{packageList,jdbcType=LONGVARCHAR}
+		)
+	</insert>
+
+	<!-- 可以使用自动生成的id -->
+	<insert id="insertSelective" parameterType="org.ostenant.yoga.store.core.bean.product.ProductWithBLOBs"
+		useGeneratedKeys="true" keyProperty="id">
+		insert into
+		<include refid="Table_Name" />
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="no != null">
+				no,
+			</if>
+			<if test="name != null">
+				name,
+			</if>
+			<if test="weight != null">
+				weight,
+			</if>
+			<if test="isNew != null">
+				is_new,
+			</if>
+			<if test="isHot != null">
+				is_hot,
+			</if>
+			<if test="isCommend != null">
+				is_commend,
+			</if>
+			<if test="createTime != null">
+				create_time,
+			</if>
+			<if test="createUserId != null">
+				create_user_id,
+			</if>
+			<if test="checkTime != null">
+				check_time,
+			</if>
+			<if test="checkUserId != null">
+				check_user_id,
+			</if>
+			<if test="isShow != null">
+				is_show,
+			</if>
+			<if test="isDel != null">
+				is_del,
+			</if>
+			<if test="typeId != null">
+				type_id,
+			</if>
+			<if test="brandId != null">
+				brand_id,
+			</if>
+			<if test="keywords != null">
+				keywords,
+			</if>
+			<if test="sales != null">
+				sales,
+			</if>
+			<if test="feature != null">
+				feature,
+			</if>
+			<if test="color != null">
+				color,
+			</if>
+			<if test="size != null">
+				size,
+			</if>
+			<if test="description != null">
+				description,
+			</if>
+			<if test="packageList != null">
+				package_list,
+			</if>
+			<if test="price != null">
+				price,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=INTEGER},
+			</if>
+			<if test="no != null">
+				#{no,jdbcType=VARCHAR},
+			</if>
+			<if test="name != null">
+				#{name,jdbcType=VARCHAR},
+			</if>
+			<if test="weight != null">
+				#{weight,jdbcType=DOUBLE},
+			</if>
+			<if test="isNew != null">
+				#{isNew,jdbcType=BIT},
+			</if>
+			<if test="isHot != null">
+				#{isHot,jdbcType=BIT},
+			</if>
+			<if test="isCommend != null">
+				#{isCommend,jdbcType=BIT},
+			</if>
+			<if test="createTime != null">
+				#{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createUserId != null">
+				#{createUserId,jdbcType=VARCHAR},
+			</if>
+			<if test="checkTime != null">
+				#{checkTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="checkUserId != null">
+				#{checkUserId,jdbcType=VARCHAR},
+			</if>
+			<if test="isShow != null">
+				#{isShow,jdbcType=BIT},
+			</if>
+			<if test="isDel != null">
+				#{isDel,jdbcType=BIT},
+			</if>
+			<if test="typeId != null">
+				#{typeId,jdbcType=INTEGER},
+			</if>
+			<if test="brandId != null">
+				#{brandId,jdbcType=INTEGER},
+			</if>
+			<if test="keywords != null">
+				#{keywords,jdbcType=VARCHAR},
+			</if>
+			<if test="sales != null">
+				#{sales,jdbcType=INTEGER},
+			</if>
+			<if test="feature != null">
+				#{feature,jdbcType=VARCHAR},
+			</if>
+			<if test="color != null">
+				#{color,jdbcType=VARCHAR},
+			</if>
+			<if test="size != null">
+				#{size,jdbcType=VARCHAR},
+			</if>
+			<if test="description != null">
+				#{description,jdbcType=LONGVARCHAR},
+			</if>
+			<if test="packageList != null">
+				#{packageList,jdbcType=LONGVARCHAR},
+			</if>
+			<if test="price != null">
+				#{price,jdbcType=INTEGER},
+			</if>
+		</trim>
+	</insert>
+
+
+	<update id="updateByPrimaryKeySelective" parameterType="org.ostenant.yoga.store.core.bean.product.ProductWithBLOBs">
+		update
+		<include refid="Table_Name" />
+		<set>
+			<if test="no != null">
+				no = #{no,jdbcType=VARCHAR},
+			</if>
+			<if test="name != null">
+				name = #{name,jdbcType=VARCHAR},
+			</if>
+			<if test="weight != null">
+				weight = #{weight,jdbcType=DOUBLE},
+			</if>
+			<if test="isNew != null">
+				is_new = #{isNew,jdbcType=BIT},
+			</if>
+			<if test="isHot != null">
+				is_hot = #{isHot,jdbcType=BIT},
+			</if>
+			<if test="isCommend != null">
+				is_commend = #{isCommend,jdbcType=BIT},
+			</if>
+			<if test="createTime != null">
+				create_time = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="createUserId != null">
+				create_user_id = #{createUserId,jdbcType=VARCHAR},
+			</if>
+			<if test="checkTime != null">
+				check_time = #{checkTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="checkUserId != null">
+				check_user_id = #{checkUserId,jdbcType=VARCHAR},
+			</if>
+			<if test="isShow != null">
+				is_show = #{isShow,jdbcType=BIT},
+			</if>
+			<if test="isDel != null">
+				is_del = #{isDel,jdbcType=BIT},
+			</if>
+			<if test="typeId != null">
+				type_id = #{typeId,jdbcType=INTEGER},
+			</if>
+			<if test="brandId != null">
+				brand_id = #{brandId,jdbcType=INTEGER},
+			</if>
+			<if test="keywords != null">
+				keywords = #{keywords,jdbcType=VARCHAR},
+			</if>
+			<if test="sales != null">
+				sales = #{sales,jdbcType=INTEGER},
+			</if>
+			<if test="feature != null">
+				feature = #{feature,jdbcType=VARCHAR},
+			</if>
+			<if test="color != null">
+				color = #{color,jdbcType=VARCHAR},
+			</if>
+			<if test="size != null">
+				size = #{size,jdbcType=VARCHAR},
+			</if>
+			<if test="description != null">
+				description = #{description,jdbcType=LONGVARCHAR},
+			</if>
+			<if test="packageList != null">
+				package_list = #{packageList,jdbcType=LONGVARCHAR},
+			</if>
+			<if test="price != null">
+				price = #{packageList,jdbcType=INTEGER},
+			</if>
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+
+
+	<update id="updateByPrimaryKeyWithBLOBs" parameterType="org.ostenant.yoga.store.core.bean.product.ProductWithBLOBs">
+		update
+		<include refid="Table_Name" />
+		set no = #{no,jdbcType=VARCHAR},
+		name = #{name,jdbcType=VARCHAR},
+		weight = #{weight,jdbcType=DOUBLE},
+		is_new = #{isNew,jdbcType=BIT},
+		is_hot = #{isHot,jdbcType=BIT},
+		is_commend = #{isCommend,jdbcType=BIT},
+		create_time = #{createTime,jdbcType=TIMESTAMP},
+		create_user_id =
+		#{createUserId,jdbcType=VARCHAR},
+		check_time =
+		#{checkTime,jdbcType=TIMESTAMP},
+		check_user_id =
+		#{checkUserId,jdbcType=VARCHAR},
+		is_show = #{isShow,jdbcType=BIT},
+		is_del = #{isDel,jdbcType=BIT},
+		type_id = #{typeId,jdbcType=INTEGER},
+		brand_id = #{brandId,jdbcType=INTEGER},
+		keywords =
+		#{keywords,jdbcType=VARCHAR},
+		sales = #{sales,jdbcType=INTEGER},
+		feature = #{feature,jdbcType=VARCHAR},
+		color =
+		#{color,jdbcType=VARCHAR},
+		size = #{size,jdbcType=VARCHAR},
+		description
+		= #{description,jdbcType=LONGVARCHAR},
+		package_list =
+		#{packageList,jdbcType=LONGVARCHAR},
+		price =
+		#{packageList,jdbcType=INTEGER}
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+
+
+	<update id="updateByPrimaryKey" parameterType="org.ostenant.yoga.store.core.bean.product.Product">
+		update
+		<include refid="Table_Name" />
+		set no = #{no,jdbcType=VARCHAR},
+		name = #{name,jdbcType=VARCHAR},
+		weight = #{weight,jdbcType=DOUBLE},
+		is_new = #{isNew,jdbcType=BIT},
+		is_hot = #{isHot,jdbcType=BIT},
+		is_commend = #{isCommend,jdbcType=BIT},
+		create_time = #{createTime,jdbcType=TIMESTAMP},
+		create_user_id =
+		#{createUserId,jdbcType=VARCHAR},
+		check_time =
+		#{checkTime,jdbcType=TIMESTAMP},
+		check_user_id =
+		#{checkUserId,jdbcType=VARCHAR},
+		is_show = #{isShow,jdbcType=BIT},
+		is_del = #{isDel,jdbcType=BIT},
+		type_id = #{typeId,jdbcType=INTEGER},
+		brand_id = #{brandId,jdbcType=INTEGER},
+		keywords =
+		#{keywords,jdbcType=VARCHAR},
+		sales = #{sales,jdbcType=INTEGER},
+		feature = #{feature,jdbcType=VARCHAR},
+		color =
+		#{color,jdbcType=VARCHAR},
+		size = #{size,jdbcType=VARCHAR},
+		price =
+		#{price,jdbcType=INTEGER}
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+
+	<!-- 获取带分业的商品列表 -->
+	<select id="getProductListByQuery" parameterType="ProductQuery"
+		resultMap="ImprovedResultMap">
+		select
+		p.id,
+		p.no,
+		p.name,
+		p.is_new,
+		p.is_hot,
+		p.is_commend,
+		p.is_show,
+		i.url
+		from
+		<include refid="Table_Name" />
+		as p
+		left join bbs_img as i
+		on (p.id = i.product_id)
+		<where>
+			<include refid="queryForValue" />
+		</where>
+		limit #{startRow},#{pageSize}
+	</select>
+	
+	
+	<!-- 查询指定商品详情 -->
+	<select id="getProductById" parameterType="int"
+		resultMap="ImprovedResultMap">
+		select
+		p.id,
+		p.no,
+		p.name,
+		p.is_new,
+		p.is_hot,
+		p.is_commend,
+		p.is_show,
+		p.price,
+		p.description,
+		p.package_list,
+		i.url
+		from
+		<include refid="Table_Name" />
+		as p
+		left join bbs_img as i
+		on (p.id = i.product_id)
+		<where>
+			and p.id = #{productId}
+		</where>
+	</select>
+	
+	
+	<!-- 查询指定商品详情 -->
+	<select id="getProductByIds" parameterType="java.util.ArrayList"
+		resultMap="ImprovedResultMap">
+		select
+		p.id,
+		p.no,
+		p.name,
+		p.is_new,
+		p.is_hot,
+		p.is_commend,
+		p.is_show,
+		p.price,
+		i.url
+		from
+		<include refid="Table_Name" />
+		as p
+		left join bbs_img as i
+		on (p.id = i.product_id)
+		<where>
+			<if test="list != null and list.size >0 ">
+				<foreach collection="list" item="id" open="AND p.id IN (" close=")" separator=",">
+					#{id}
+				</foreach>
+			</if>
+		</where>
+	</select>
+	
+
+	<!-- 获取满足要求的总记录数 -->
+	<select id="getTotalCountByQuery" parameterType="ProductQuery"
+		resultType="int">
+		select
+		count(1)
+		from
+		<include refid="Table_Name" />
+		<where>
+			<include refid="queryForValue" />
+		</where>
+	</select>
+
+	<!-- 根据no获取id -->
+	<select id="getProductIdByNo" resultType="java.lang.Integer"
+		parameterType="java.lang.String">
+		select
+		id
+		from
+		<include refid="Table_Name" />
+		<where>
+			<if test="no != null and no != ''">
+				no = ${no}
+			</if>
+		</where>
+	</select>
+
+	<!-- 批量上下架 -->
+	<update id="changeIsShowByIds" parameterType="java.util.HashMap">
+		update
+		<include refid="Table_Name" />
+		<set>
+			<if test="isShow != null">
+				is_show = #{isShow,jdbcType=BIT},
+			</if>
+		</set>
+		<where>
+			<if test="idList != null and idList.size > 0">
+				<foreach collection="idList" item="id" open="id in ("
+					separator="," close=")">
+					#{id}
+				</foreach>
+			</if>
+		</where>
+	</update>
+
+	<!-- 更新商品平均价格（根据最小销售单元更新） -->
+	<update id="updatePriceFromSku">
+		UPDATE
+		bbs_product AS b,
+		(SELECT
+		product_id,
+		AVG(sku_price) AS prices
+		FROM bbs_sku
+		GROUP BY product_id)
+		AS s
+		SET
+		b.price = s.prices
+		WHERE b.id = s.product_id
+	</update>
+
+	<!-- 通过productId更新商品平均价格（根据最小销售单元更新） -->
+	<update id="updatePriceFromSkuBy" parameterType="int">
+		UPDATE
+		bbs_product AS b,
+		(SELECT
+		product_id, AVG(sku_price) AS prices
+		FROM
+		bbs_sku
+		GROUP BY product_id)
+		AS s
+		SET b.price = s.prices
+		WHERE b.id =
+		s.product_id
+		and product_id = #{productId}
+	</update>
+
+	<!-- 更新商品总价格 -->
+	<update id="updateSalesFromSku">
+		UPDATE bbs_product AS b,
+		(SELECT product_id,
+		SUM(sales) AS sales
+		FROM bbs_sku
+		GROUP BY product_id) AS s
+		SET b.sales =
+		s.sales
+		WHERE b.id = s.product_id
+	</update>
+
+
+	<!-- 通过productId更新商品总价格 -->
+	<update id="updateSalesFromSkuBy" parameterType="int">
+		UPDATE
+		bbs_product AS b,
+		(SELECT product_id,
+		SUM(sales) AS sales
+		FROM bbs_sku
+		GROUP BY product_id) AS s
+		SET b.sales = s.sales
+		WHERE b.id =
+		s.product_id
+		and product_id = #{productId}
+	</update>
+
+
+	<!-- 前台 -->
+	<select id="getProductListWithPage" parameterType="MultiProductQuery" resultMap="ImprovedResultMap">
+		<include refid="productSelector"/>
+		left join bbs_img 
+		on (bbs_product.id = bbs_img.product_id)
+		<include refid="productWhereFront"/>
+		<include refid="productListOrder"/>
+		<include refid="productListLimit"/>
+	</select>
+
+	<select id="getTotalCountListWithPage" parameterType="MultiProductQuery" resultType="int">
+		select count(1) from bbs_product
+		<include refid="productWhereFront"/>
+	</select>
+	
+	<!-- 获取所有已上架的商品id集合 -->
+	<select id="getAllUpCarriageIds" resultType="int">
+		select id
+		from bbs_product
+		where is_show = 1
+	</select>
+
+	<select id="getByProductId" parameterType="int" resultMap="BaseResultMap">
+		select 
+		p.id,
+		p.no,
+		p.name,
+		p.type_id,
+		p.is_new,
+		p.is_hot,
+		p.is_commend,
+		p.is_show,
+		p.price
+		from bbs_product
+		as p
+		<where>
+			id = #{productId}
+		</where>
+	</select>
+
+</mapper>
+

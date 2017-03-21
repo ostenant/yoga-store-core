@@ -1,0 +1,329 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.ostenant.yoga.store.core.dao.order.OrderMapper" >
+  <resultMap id="BaseResultMap" type="org.ostenant.yoga.store.core.bean.order.Order" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="oid" property="oid" jdbcType="VARCHAR" />
+    <result column="addr_id" property="addrId" jdbcType="INTEGER" />
+    <result column="deliver_fee" property="deliverFee" jdbcType="DECIMAL" />
+    <result column="payable_fee" property="payableFee" jdbcType="DOUBLE" />
+    <result column="total_price" property="totalPrice" jdbcType="DOUBLE" />
+    <result column="payment_way" property="paymentWay" jdbcType="BIT" />
+    <result column="payment_cash" property="paymentCash" jdbcType="BIT" />
+    <result column="delivery" property="delivery" jdbcType="BIT" />
+    <result column="isConfirm" property="isconfirm" jdbcType="BIT" />
+    <result column="is_paiy" property="isPaiy" jdbcType="BIT" />
+    <result column="state" property="state" jdbcType="BIT" />
+    <result column="create_date" property="createDate" jdbcType="TIMESTAMP" javaType="java.sql.Timestamp" />
+    <result column="note" property="note" jdbcType="VARCHAR" />
+    <result column="buyer_id" property="buyerId" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  
+  <select id="TableName">
+  	bbs_order
+  </select>
+  
+  <sql id="Base_Column_List" >
+    id, oid, deliver_fee, payable_fee, total_price, payment_way, payment_cash, delivery, 
+    isConfirm, is_paiy, state, create_date, note, buyer_id, addr_id
+  </sql>
+  
+  
+  
+  <!-- ============================================================================================================= -->
+ 
+ 	<!-- Select SQL -->
+	<sql id="orderSelector">
+		SELECT
+			<if test="fields != null">
+				${fields}
+			</if>
+			<if test="fields == null">
+			id,oid,deliver_fee,payable_fee,total_price,payment_way,payment_cash,delivery,isConfirm,is_paiy,state,create_date,note,buyer_id,addr_id
+			</if>
+		FROM bbs_order
+	</sql>
+	
+	<sql id="orderListWhere">
+		<where>
+				<if test="queryBean.id != null">
+					and id=#{queryBean.id}
+				</if>
+				<if test="queryBean.oid != null">
+				<if test="queryBean.oidLike == false">
+					and oid=#{queryBean.oid}
+				</if>
+				<if test="queryBean.oidLike == true">
+					and  oid like "%"#{queryBean.oid}"%"
+				</if>
+				</if>
+				<if test="queryBean.deliverFee != null">
+					and deliver_fee=#{queryBean.deliverFee}
+				</if>
+				<if test="queryBean.payableFee != null">
+					and payable_fee=#{queryBean.payableFee}
+				</if>
+				<if test="queryBean.totalPrice != null">
+					and total_price=#{queryBean.totalPrice}
+				</if>
+				<if test="queryBean.paymentWay != null">
+					and payment_way=#{queryBean.paymentWay}
+				</if>
+				<if test="queryBean.paymentCash != null">
+					and payment_cash=#{queryBean.paymentCash}
+				</if>
+				<if test="queryBean.delivery != null">
+					and delivery=#{queryBean.delivery}
+				</if>
+				<if test="queryBean.isconfirm != null">
+					and isConfirm=#{queryBean.isconfirm}
+				</if>
+				<if test="queryBean.isPaiy != null">
+					and is_paiy=#{queryBean.isPaiy}
+				</if>
+				<if test="queryBean.state != null">
+					and state=#{queryBean.state}
+				</if>
+				<if test="queryBean.createDate != null">
+					and create_date=#{queryBean.createDate}
+				</if>
+				<if test="queryBean.note != null">
+				<if test="queryBean.noteLike == false">
+					and note=#{queryBean.note}
+				</if>
+				<if test="queryBean.noteLike == true">
+					and  note like "%"#{queryBean.note}"%"
+				</if>
+				</if>
+				<if test="queryBean.buyerId != null">
+				<if test="queryBean.buyerIdLike == false">
+					and buyer_id=#{queryBean.buyerId}
+				</if>
+				<if test="queryBean.buyerIdLike == true">
+					and  buyer_id like "%"#{queryBean.buyerId}"%"
+				</if>
+				</if>
+		</where>
+	</sql>
+
+	<sql id="orderListOrder">
+		<if test="fieldOrders != null and fieldOrders.size >0">
+		order by 
+			<foreach collection="fieldOrders" separator="," item="fieldOrder">
+				${fieldOrder.field} ${fieldOrder.order}
+			</foreach>
+		</if>
+	</sql>
+
+	<sql id="orderListLimit">
+		<if test="startRow != null">
+			limit #{startRow},#{pageSize}
+		</if>
+	</sql>
+	
+	<select id="getOrdersBy" parameterType="OrderQuery" resultMap="BaseResultMap">
+		<include refid="orderSelector"/>
+		<include refid="orderListWhere"/>
+		<include refid="orderListOrder"/>
+	</select>
+ 
+  <!-- ============================================================================================================= -->
+  
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from bbs_order
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from bbs_order
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  
+  <insert id="insert" parameterType="org.ostenant.yoga.store.core.bean.order.Order" keyProperty="id" useGeneratedKeys="true">
+    insert into bbs_order (id, oid, deliver_fee, 
+      payable_fee, total_price, payment_way, 
+      payment_cash, delivery, isConfirm, 
+      is_paiy, state, create_date,
+      note, buyer_id, addr_id)
+    values (#{id,jdbcType=INTEGER}, #{oid,jdbcType=VARCHAR}, #{deliverFee,jdbcType=DECIMAL}, 
+      #{payableFee,jdbcType=DOUBLE}, #{totalPrice,jdbcType=DOUBLE}, #{paymentWay,jdbcType=BIT}, 
+      #{paymentCash,jdbcType=BIT}, #{delivery,jdbcType=BIT}, #{isconfirm,jdbcType=BIT}, 
+      #{isPaiy,jdbcType=BIT}, #{state,jdbcType=BIT}, #{createDate,jdbcType=TIMESTAMP}, 
+      #{note,jdbcType=VARCHAR}, #{buyerId,jdbcType=VARCHAR}, #{addrId,jdbcType=VARCHAR})
+  </insert>
+  
+  
+  <insert id="insertSelective" parameterType="org.ostenant.yoga.store.core.bean.order.Order"  keyProperty="id" useGeneratedKeys="true">
+    insert into bbs_order
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="oid != null" >
+        oid,
+      </if>
+      <if test="deliverFee != null" >
+        deliver_fee,
+      </if>
+      <if test="payableFee != null" >
+        payable_fee,
+      </if>
+      <if test="totalPrice != null" >
+        total_price,
+      </if>
+      <if test="paymentWay != null" >
+        payment_way,
+      </if>
+      <if test="paymentCash != null" >
+        payment_cash,
+      </if>
+      <if test="delivery != null" >
+        delivery,
+      </if>
+      <if test="isconfirm != null" >
+        isConfirm,
+      </if>
+      <if test="isPaiy != null" >
+        is_paiy,
+      </if>
+      <if test="state != null" >
+        state,
+      </if>
+      <if test="createDate != null" >
+        create_date,
+      </if>
+      <if test="note != null" >
+        note,
+      </if>
+      <if test="buyerId != null" >
+        buyer_id,
+      </if>
+      <if test="addrId != null" >
+        addr_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="oid != null" >
+        #{oid,jdbcType=VARCHAR},
+      </if>
+      <if test="deliverFee != null" >
+        #{deliverFee,jdbcType=DECIMAL},
+      </if>
+      <if test="payableFee != null" >
+        #{payableFee,jdbcType=DOUBLE},
+      </if>
+      <if test="totalPrice != null" >
+        #{totalPrice,jdbcType=DOUBLE},
+      </if>
+      <if test="paymentWay != null" >
+        #{paymentWay,jdbcType=BIT},
+      </if>
+      <if test="paymentCash != null" >
+        #{paymentCash,jdbcType=BIT},
+      </if>
+      <if test="delivery != null" >
+        #{delivery,jdbcType=BIT},
+      </if>
+      <if test="isconfirm != null" >
+        #{isconfirm,jdbcType=BIT},
+      </if>
+      <if test="isPaiy != null" >
+        #{isPaiy,jdbcType=BIT},
+      </if>
+      <if test="state != null" >
+        #{state,jdbcType=BIT},
+      </if>
+      <if test="createDate != null" >
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="note != null" >
+        #{note,jdbcType=VARCHAR},
+      </if>
+      <if test="buyerId != null" >
+        #{buyerId,jdbcType=VARCHAR},
+      </if>
+      <if test="addrId != null" >
+        #{addrId,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  
+  
+  <update id="updateByPrimaryKeySelective" parameterType="org.ostenant.yoga.store.core.bean.order.Order" >
+    update bbs_order
+    <set >
+      <if test="oid != null" >
+        oid = #{oid,jdbcType=VARCHAR},
+      </if>
+      <if test="deliverFee != null" >
+        deliver_fee = #{deliverFee,jdbcType=DECIMAL},
+      </if>
+      <if test="payableFee != null" >
+        payable_fee = #{payableFee,jdbcType=DOUBLE},
+      </if>
+      <if test="totalPrice != null" >
+        total_price = #{totalPrice,jdbcType=DOUBLE},
+      </if>
+      <if test="paymentWay != null" >
+        payment_way = #{paymentWay,jdbcType=BIT},
+      </if>
+      <if test="paymentCash != null" >
+        payment_cash = #{paymentCash,jdbcType=BIT},
+      </if>
+      <if test="delivery != null" >
+        delivery = #{delivery,jdbcType=BIT},
+      </if>
+      <if test="isconfirm != null" >
+        isConfirm = #{isconfirm,jdbcType=BIT},
+      </if>
+      <if test="isPaiy != null" >
+        is_paiy = #{isPaiy,jdbcType=BIT},
+      </if>
+      <if test="state != null" >
+        state = #{state,jdbcType=BIT},
+      </if>
+      <if test="createDate != null" >
+        create_date = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="note != null" >
+        note = #{note,jdbcType=VARCHAR},
+      </if>
+      <if test="buyerId != null" >
+        buyer_id = #{buyerId,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  
+  <update id="updateByPrimaryKey" parameterType="org.ostenant.yoga.store.core.bean.order.Order" >
+    update bbs_order
+    set oid = #{oid,jdbcType=VARCHAR},
+      deliver_fee = #{deliverFee,jdbcType=DECIMAL},
+      payable_fee = #{payableFee,jdbcType=DOUBLE},
+      total_price = #{totalPrice,jdbcType=DOUBLE},
+      payment_way = #{paymentWay,jdbcType=BIT},
+      payment_cash = #{paymentCash,jdbcType=BIT},
+      delivery = #{delivery,jdbcType=BIT},
+      isConfirm = #{isconfirm,jdbcType=BIT},
+      is_paiy = #{isPaiy,jdbcType=BIT},
+      state = #{state,jdbcType=BIT},
+      create_date = #{createDate,jdbcType=TIMESTAMP},
+      note = #{note,jdbcType=VARCHAR},
+      buyer_id = #{buyerId,jdbcType=VARCHAR},
+      addr_id = #{addrId,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  
+</mapper>
+

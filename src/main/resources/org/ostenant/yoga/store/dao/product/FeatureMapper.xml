@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.ostenant.yoga.store.core.dao.product.FeatureMapper">
+
+	<resultMap id="BaseResultMap" type="org.ostenant.yoga.store.core.bean.product.Feature">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="value" property="value" jdbcType="VARCHAR" />
+		<result column="sort" property="sort" jdbcType="INTEGER" />
+		<result column="is_del" property="isDel" jdbcType="BIT" />
+	</resultMap>
+
+
+
+	<!-- ============================================================================================================= -->
+
+	<!-- Select SQL -->
+	<sql id="featureSelector">
+		SELECT
+		<if test="fields != null">
+			${fields}
+		</if>
+		<if test="fields == null">
+			id,name,value,sort,is_del
+		</if>
+		FROM bbs_feature
+	</sql>
+	<sql id="featureListWhere">
+		<where>
+			<if test="id != null">
+				and id=#{id}
+			</if>
+			<if test="name != null">
+				<if test="nameLike == false">
+					and name=#{name}
+				</if>
+				<if test="nameLike == true">
+					and name like "%"#{name}"%"
+				</if>
+			</if>
+			<if test="value != null">
+				<if test="valueLike == false">
+					and value=#{value}
+				</if>
+				<if test="valueLike == true">
+					and value like "%"#{value}"%"
+				</if>
+			</if>
+			<if test="sort != null">
+				and sort=#{sort}
+			</if>
+			<if test="isDel != null">
+				and is_del=#{isDel}
+			</if>
+		</where>
+	</sql>
+
+	<sql id="featureListOrder">
+		<if test="fieldOrders != null and fieldOrders.size >0">
+			order by
+			<foreach collection="fieldOrders" separator="," item="fieldOrder">
+				${fieldOrder.fieldName} ${fieldOrder.order}
+			</foreach>
+		</if>
+	</sql>
+
+	<sql id="featureListLimit">
+		<if test="startRow != null">
+			limit #{startRow},#{pageSize}
+		</if>
+	</sql>
+
+	<!-- 获取列表 -->
+	<select id="getFeatureList2" parameterType="FeatureQuery"
+		resultMap="BaseResultMap">
+		<include refid="featureSelector"/>
+		<include refid="featureListWhere"/>
+		<include refid="featureListOrder"/>
+	</select>
+
+	<!-- ============================================================================================================= -->
+
+
+
+	<sql id="Base_Column_List">
+		id, name, value, sort, is_del
+	</sql>
+
+	<sql id="TableName">
+		bbs_feature
+	</sql>
+
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from
+		<include refid="TableName"></include>
+		where id = #{id,jdbcType=INTEGER}
+	</select>
+
+
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from
+		<include refid="TableName"></include>
+		where id = #{id,jdbcType=INTEGER}
+	</delete>
+
+
+	<insert id="insert" parameterType="org.ostenant.yoga.store.core.bean.product.Feature">
+		insert into
+		<include refid="TableName"></include>
+		(id, name, value,
+		sort, is_del)
+		values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR},
+		#{value,jdbcType=VARCHAR},
+		#{sort,jdbcType=INTEGER}, #{isDel,jdbcType=BIT})
+	</insert>
+
+
+	<insert id="insertSelective" parameterType="org.ostenant.yoga.store.core.bean.product.Feature">
+		insert into
+		<include refid="TableName"></include>
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="name != null">
+				name,
+			</if>
+			<if test="value != null">
+				value,
+			</if>
+			<if test="sort != null">
+				sort,
+			</if>
+			<if test="isDel != null">
+				is_del,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=INTEGER},
+			</if>
+			<if test="name != null">
+				#{name,jdbcType=VARCHAR},
+			</if>
+			<if test="value != null">
+				#{value,jdbcType=VARCHAR},
+			</if>
+			<if test="sort != null">
+				#{sort,jdbcType=INTEGER},
+			</if>
+			<if test="isDel != null">
+				#{isDel,jdbcType=BIT},
+			</if>
+		</trim>
+	</insert>
+
+
+	<update id="updateByPrimaryKeySelective" parameterType="org.ostenant.yoga.store.core.bean.product.Feature">
+		update
+		<include refid="TableName"></include>
+		<set>
+			<if test="name != null">
+				name = #{name,jdbcType=VARCHAR},
+			</if>
+			<if test="value != null">
+				value = #{value,jdbcType=VARCHAR},
+			</if>
+			<if test="sort != null">
+				sort = #{sort,jdbcType=INTEGER},
+			</if>
+			<if test="isDel != null">
+				is_del = #{isDel,jdbcType=BIT},
+			</if>
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+
+
+	<update id="updateByPrimaryKey" parameterType="org.ostenant.yoga.store.core.bean.product.Feature">
+		update
+		<include refid="TableName"></include>
+		set name = #{name,jdbcType=VARCHAR},
+		value = #{value,jdbcType=VARCHAR},
+		sort = #{sort,jdbcType=INTEGER},
+		is_del = #{isDel,jdbcType=BIT}
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+
+	<!-- 获取属性列表 -->
+	<select id="getFeatureList" resultMap="BaseResultMap">
+		select id, name, value, sort, is_del
+		from
+		<include refid="TableName"></include>
+		where is_del = 1
+		order by sort asc
+	</select>
+
+</mapper>
+

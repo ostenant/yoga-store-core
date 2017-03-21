@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.ostenant.yoga.store.core.dao.product.TypeMapper">
+
+	<resultMap id="BaseResultMap" type="org.ostenant.yoga.store.core.bean.product.Type">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="parent_id" property="parentId" jdbcType="INTEGER" />
+		<result column="note" property="note" jdbcType="VARCHAR" />
+		<result column="is_display" property="isDisplay" jdbcType="BIT" />
+	</resultMap>
+
+
+	<!-- =================================================================================================================== -->
+
+
+	<sql id="typeSelector">
+		SELECT
+		<if test="fields != null">
+			${fields}
+		</if>
+		<if test="fields == null">
+			id, name, parent_id, note, is_display
+		</if>
+		FROM bbs_type
+	</sql>
+	
+	
+	<sql id="typeListWhere">
+		<where>
+			<if test="id != null">
+				and id=#{id}
+			</if>
+			<if test="name != null">
+				<if test="nameLike == false">
+					and name=#{name}
+				</if>
+				<if test="nameLike == true">
+					and name like "%"#{name}"%"
+				</if>
+			</if>
+			<if test="parentId == null">
+				and parent_id != 0
+			</if>
+			<if test="note != null">
+				<if test="noteLike == false">
+					and note=#{note}
+				</if>
+				<if test="noteLike == true">
+					and note like "%"#{note}"%"
+				</if>
+			</if>
+			<if test="isDisplay != null">
+				and is_display=#{isDisplay}
+			</if>
+		</where>
+	</sql>
+
+
+	<sql id="typeListOrder">
+		<if test="fieldOrders != null and fieldOrders.size > 0">
+			order by
+			<foreach collection="fieldOrders" separator="," item="fieldOrder">
+				${fieldOrder.fieldName} ${fieldOrder.order}
+			</foreach>
+		</if>
+	</sql>
+
+	<sql id="typeListLimit">
+		<if test="startRow != null">
+			limit #{startRow},#{pageSize}
+		</if>
+	</sql>
+
+	<!-- 数据集合 -->
+	<select id="getTypeList" parameterType="TypeQuery" resultMap="BaseResultMap">
+		<include refid="typeSelector" />
+		<include refid="typeListWhere" />
+		<include refid="typeListOrder" />
+	</select>
+
+
+
+	<!-- =================================================================================================================== -->
+
+
+	<sql id="Table_Name">
+		bbs_type
+	</sql>
+
+	<sql id="Base_Column_List">
+		id, name, parent_id, note, is_display
+	</sql>
+
+
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from
+		<include refid="Table_Name" />
+		where id = #{id,jdbcType=INTEGER}
+	</select>
+
+
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from
+		<include refid="Table_Name" />
+		where id = #{id,jdbcType=INTEGER}
+	</delete>
+
+
+	<insert id="insert" parameterType="org.ostenant.yoga.store.core.bean.product.Type">
+		insert into
+		<include refid="Table_Name" />
+		(id, name, parent_id,
+		note, is_display)
+		values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR},
+		#{parentId,jdbcType=INTEGER},
+		#{note,jdbcType=VARCHAR}, #{isDisplay,jdbcType=BIT})
+	</insert>
+
+
+	<insert id="insertSelective" parameterType="org.ostenant.yoga.store.core.bean.product.Type">
+		insert into
+		<include refid="Table_Name" />
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="name != null">
+				name,
+			</if>
+			<if test="parentId != null">
+				parent_id,
+			</if>
+			<if test="note != null">
+				note,
+			</if>
+			<if test="isDisplay != null">
+				is_display,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=INTEGER},
+			</if>
+			<if test="name != null">
+				#{name,jdbcType=VARCHAR},
+			</if>
+			<if test="parentId != null">
+				#{parentId,jdbcType=INTEGER},
+			</if>
+			<if test="note != null">
+				#{note,jdbcType=VARCHAR},
+			</if>
+			<if test="isDisplay != null">
+				#{isDisplay,jdbcType=BIT},
+			</if>
+		</trim>
+	</insert>
+
+
+	<update id="updateByPrimaryKeySelective" parameterType="org.ostenant.yoga.store.core.bean.product.Type">
+		update
+		<include refid="Table_Name" />
+		<set>
+			<if test="name != null">
+				name = #{name,jdbcType=VARCHAR},
+			</if>
+			<if test="parentId != null">
+				parent_id = #{parentId,jdbcType=INTEGER},
+			</if>
+			<if test="note != null">
+				note = #{note,jdbcType=VARCHAR},
+			</if>
+			<if test="isDisplay != null">
+				is_display = #{isDisplay,jdbcType=BIT},
+			</if>
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+
+
+	<update id="updateByPrimaryKey" parameterType="org.ostenant.yoga.store.core.bean.product.Type">
+		update
+		<include refid="Table_Name" />
+		set name = #{name,jdbcType=VARCHAR},
+		parent_id = #{parentId,jdbcType=INTEGER},
+		note = #{note,jdbcType=VARCHAR},
+		is_display = #{isDisplay,jdbcType=BIT}
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+
+	<!-- 获取商品类型列表 -->
+	<select id="getTypeNameList" resultMap="BaseResultMap">
+		select
+		id,
+		name
+		from
+		<include refid="Table_Name" />
+		where
+		parent_id != 0
+	</select>
+
+</mapper>
+

@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.ostenant.yoga.store.core.dao.product.BrandMapper">
+	<resultMap id="BaseResultMap" type="org.ostenant.yoga.store.core.bean.product.Brand">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="description" property="description" jdbcType="VARCHAR" />
+		<result column="img_url" property="imgUrl" jdbcType="VARCHAR" />
+		<result column="web_site" property="webSite" jdbcType="VARCHAR" />
+		<result column="sort" property="sort" jdbcType="INTEGER" />
+		<result column="is_display" property="isDisplay" jdbcType="BIT" />
+	</resultMap>
+
+
+	<sql id="Base_Column_List">
+		id, name, description, img_url, web_site, sort, is_display
+	</sql>
+	
+	<!-- ========================================================================================================== -->
+	
+	<!-- 品牌选择器 -->
+	<sql id="brandSelector">
+		select
+		<if test="fields != null">
+			${fields}
+		</if>
+		<if test="fields == null">
+			id , name ,description,img_url,sort,is_display
+		</if>
+		from bbs_brand
+	</sql>
+	
+	<!-- 品牌条件 -->
+	<sql id="brandWhere">
+		<where>
+			<if test="isDisplay != null">
+				is_display = #{isDisplay}
+			</if>
+			<if test="name != null">
+				<if test="nameLike == false">
+					and name = #{name}
+				</if>
+				<if test="nameLike == true">
+					and name like "%"#{name}"%"
+				</if>
+			</if>
+		</where>
+	</sql>
+	
+	<!-- 品牌 Order by -->
+	<sql id="brandOrderBy">
+		<if test="fieldOrders != null and fieldOrders.size > 0">
+			order by
+			<foreach collection="fieldOrders" item="fieldOrder" separator=",">
+				${fieldOrder.field} ${fieldOrder.order}
+			</foreach>
+		</if>
+	</sql>
+	
+	<!-- limit -->
+	<sql id="brandLimit">
+		<if test="startRow != null">
+			limit #{startRow},#{pageSize}
+		</if>
+	</sql>
+	
+	<!-- 查询品牌集合 -->
+	<select id="getBrandList" parameterType="BrandQuery" resultMap="BaseResultMap">
+		<include refid="brandSelector"/>
+		<include refid="brandWhere"/>
+		<include refid="brandOrderBy"/>
+	</select>
+	
+	<!-- ========================================================================================================== -->
+	
+	
+
+	<sql id="set_value_sql">
+		<if test="name != null and name != ''">
+			name = #{name,jdbcType=VARCHAR},
+		</if>
+		<if test="description != null and description != ''">
+			description = #{description,jdbcType=VARCHAR},
+		</if>
+		<if test="imgUrl != null and imgUrl != ''">
+			img_url = #{imgUrl,jdbcType=VARCHAR},
+		</if>
+		<if test="webSite != null and webSite != ''">
+			web_site = #{webSite,jdbcType=VARCHAR},
+		</if>
+		<if test="sort != null">
+			sort = #{sort,jdbcType=INTEGER},
+		</if>
+		<if test="isDisplay != null">
+			is_display = #{isDisplay,jdbcType=BIT},
+		</if>
+	</sql>
+
+
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap"
+		parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from bbs_brand
+		where id = #{id,jdbcType=INTEGER}
+	</select>
+
+
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from bbs_brand
+		where id = #{id,jdbcType=INTEGER}
+	</delete>
+
+	<!-- 根据ids批量删除数据 -->
+	<delete id="deleteByIds" parameterType="java.util.ArrayList">
+		delete from bbs_brand
+		<where>
+			<if test="list != null">
+				<foreach collection="list" item="id" open="AND id IN ("
+					separator="," close=")" index="index">
+					#{id}
+				</foreach>
+			</if>
+		</where>
+	</delete>
+
+	<insert id="insert" parameterType="Brand">
+		insert into bbs_brand (id, name, description,
+		img_url, web_site, sort,
+		is_display)
+		values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR},
+		#{description,jdbcType=VARCHAR},
+		#{imgUrl,jdbcType=VARCHAR}, #{webSite,jdbcType=VARCHAR}, #{sort,jdbcType=INTEGER},
+		#{isDisplay,jdbcType=BIT})
+	</insert>
+
+
+	<insert id="insertSelective" parameterType="Brand">
+		insert into bbs_brand
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="name != null">
+				name,
+			</if>
+			<if test="description != null">
+				description,
+			</if>
+			<if test="imgUrl != null">
+				img_url,
+			</if>
+			<if test="webSite != null">
+				web_site,
+			</if>
+			<if test="sort != null">
+				sort,
+			</if>
+			<if test="isDisplay != null">
+				is_display,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=INTEGER},
+			</if>
+			<if test="name != null">
+				#{name,jdbcType=VARCHAR},
+			</if>
+			<if test="description != null">
+				#{description,jdbcType=VARCHAR},
+			</if>
+			<if test="imgUrl != null">
+				#{imgUrl,jdbcType=VARCHAR},
+			</if>
+			<if test="webSite != null">
+				#{webSite,jdbcType=VARCHAR},
+			</if>
+			<if test="sort != null">
+				#{sort,jdbcType=INTEGER},
+			</if>
+			<if test="isDisplay != null">
+				#{isDisplay,jdbcType=BIT},
+			</if>
+		</trim>
+	</insert>
+
+	<!-- 根据id更新表数据 -->
+	<update id="updateByPrimaryKeySelective" parameterType="Brand">
+		update bbs_brand
+		<set>
+			<if test="name != null">
+				name = #{name,jdbcType=VARCHAR},
+			</if>
+			<if test="description != null">
+				description = #{description,jdbcType=VARCHAR},
+			</if>
+			<if test="imgUrl != null">
+				img_url = #{imgUrl,jdbcType=VARCHAR},
+			</if>
+			<if test="webSite != null">
+				web_site = #{webSite,jdbcType=VARCHAR},
+			</if>
+			<if test="sort != null">
+				sort = #{sort,jdbcType=INTEGER},
+			</if>
+			<if test="isDisplay != null">
+				is_display = #{isDisplay,jdbcType=BIT},
+			</if>
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+
+
+
+	<!-- 根据id批量更新表数据 -->
+	<update id="updateBatchByIds" parameterType="MultiBrandQuery">
+		update bbs_brand
+		<set>
+			<include refid="set_value_sql" />
+		</set>
+		<where>
+			<if test="ids != null">
+				<foreach collection="ids" item="id" open="AND id IN ("
+					separator="," close=")" index="index">
+					#{id}
+				</foreach>
+			</if>
+		</where>
+	</update>
+
+
+	<update id="updateByPrimaryKey" parameterType="Brand">
+		update bbs_brand
+		set name = #{name,jdbcType=VARCHAR},
+		description = #{description,jdbcType=VARCHAR},
+		img_url = #{imgUrl,jdbcType=VARCHAR},
+		web_site = #{webSite,jdbcType=VARCHAR},
+		sort = #{sort,jdbcType=INTEGER},
+		is_display = #{isDisplay,jdbcType=BIT}
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+
+	<!-- 根据Brand查询符合条件的所有品牌分页集合 -->
+	<select id="getBrandListBy" parameterType="BrandQuery"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from
+		bbs_brand
+		<where>
+			<if test="isDisplay != null">
+				is_display = #{isDisplay}
+			</if>
+			<if test="name != null and name !=''">
+				and name like '%${name}%'
+			</if>
+		</where>
+		order by id desc
+		limit #{startRow},#{pageSize}
+	</select>
+
+	<!-- 根据Brand查询符合条件的记录总数 -->
+	<select id="getTotalCountBy" parameterType="BrandQuery"
+		resultType="int">
+		select
+		count(1)
+		from
+		bbs_brand
+		<where>
+			<if test="isDisplay != null">
+				is_display = #{isDisplay}
+			</if>
+			<if test="name != null">
+				and name like '%${name}%'
+			</if>
+		</where>
+	</select>
+
+	<!-- 获取简单信息 -->
+	<select id="getBrandNameList" resultMap="BaseResultMap">
+		select 
+		id,
+		name
+		from
+		bbs_brand
+		where
+		is_display = 1
+		order by
+		id
+	</select>
+
+</mapper>

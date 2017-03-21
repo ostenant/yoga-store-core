@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+     http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+     http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+     http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-3.0.xsd
+     http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+     http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+
+	<!-- 配置缓存 -->
+	<bean id="memCachedClient" class="com.danga.MemCached.MemCachedClient">
+		<constructor-arg>
+			<value>sockIOPool</value>
+		</constructor-arg>
+	</bean>
+
+
+	<!-- 配置分布式缓存的连接池 -->
+	<bean id="sockIOPool" class="com.danga.MemCached.SockIOPool"
+		factory-method="getInstance" init-method="initialize" destroy-method="shutDown">
+		<constructor-arg>
+			<value>sockIOPool</value>
+		</constructor-arg>
+		<property name="servers">
+			<list>
+				<value>192.168.125.136:11211</value>
+			</list>
+		</property>
+		<property name="weights">
+			<list>
+				<value>1</value>
+			</list>
+		</property>
+	</bean>
+
+	<!-- 切面bean -->
+	<bean id="memcachedAspect" class="com.bbsport.common.aop.MemcachedAspect">
+	</bean>
+
+	<!-- 配置aop -->
+	<aop:config>
+		<!-- 配置切面 -->
+		<aop:aspect ref="memcachedAspect">
+			<!-- 环绕切面 查询 -->
+			<aop:around method="doAround" pointcut="execution(* com.bbsport.core.service.impl.*.*ServiceImpl.get*(..))" arg-names="pjp"/>
+			<!-- 后置切面 增删改 -->
+			<aop:after method="doAfter" pointcut="execution(* com.bbsport.core.service.impl.*.*ServiceImpl.update*(..))" />
+			<aop:after method="doAfter" pointcut="execution(* com.bbsport.core.service.impl.*.*ServiceImpl.add*(..))" />
+			<aop:after method="doAfter" pointcut="execution(* com.bbsport.core.service.impl.*.*ServiceImpl.delete*(..))" />
+			<aop:after method="doAfter" pointcut="execution(* com.bbsport.core.service.impl.*.*ServiceImpl.modify*(..))" />
+			<aop:after method="doAfter" pointcut="execution(* com.bbsport.core.service.impl.*.*ServiceImpl.edit*(..))" />
+			<aop:after method="doAfter" pointcut="execution(* com.bbsport.core.service.impl.*.*ServiceImpl.save*(..))" />
+			<aop:after method="doAfter" pointcut="execution(* com.bbsport.core.service.impl.*.*ServiceImpl.up*(..))" />
+			<aop:after method="doAfter" pointcut="execution(* com.bbsport.core.service.impl.*.*ServiceImpl.under*(..))" />
+			<aop:after method="doAfter" pointcut="execution(* com.bbsport.core.service.impl.*.*ServiceImpl.top*(..))" />
+		</aop:aspect>
+	</aop:config>
+
+</beans>

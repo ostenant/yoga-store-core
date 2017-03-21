@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.ostenant.yoga.store.core.dao.user.AddressMapper" >
+  <resultMap id="BaseResultMap" type="org.ostenant.yoga.store.core.bean.user.Address" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="buyer_id" property="buyerId" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="city" property="city" jdbcType="VARCHAR" />
+    <result column="addr" property="addr" jdbcType="VARCHAR" />
+    <result column="phone" property="phone" jdbcType="VARCHAR" />
+    <result column="is_def" property="isDef" jdbcType="INTEGER" />
+  </resultMap>
+  
+  
+  <sql id="Base_Column_List" >
+    id, buyer_id, name, city, addr, phone, is_def
+  </sql>
+  
+  <sql id="TableName">
+  	bbs_addr
+  </sql>
+  
+  <!-- 查询收货地址列表 -->
+  <select id="getOwnAddrList" parameterType="java.lang.String" resultMap="BaseResultMap">
+  	select  
+  	<include refid="Base_Column_List" />
+    from 
+  	<include refid="TableName"/>
+  	<where>
+  		buyer_id = #{username}
+  	</where>
+  	order by is_def desc
+  </select>
+  
+  <!-- 修改默认的收货地址 -->
+  <update id="modifyDefaultAddress" parameterType="int">
+	  	UPDATE bbs_addr
+	  	SET is_def = 
+	  	CASE 
+	  	WHEN id = #{addrId} THEN 1
+	  	ELSE 0 END
+  </update>
+  
+  <!-- 查看当前用户保存的地址条数 -->
+  <select id="getOwnAddrCount" parameterType="java.lang.String" resultType="int">
+  	select count(1)
+  	from <include refid="TableName"/>
+  	<where>
+  		and buyer_id = #{username}
+  	</where>
+  </select>
+  
+  <!-- 获取默认收货地址 -->
+  <select id="getDefaultAddress" parameterType="java.lang.String" resultMap="BaseResultMap" >
+  	select  
+  	<include refid="Base_Column_List" />
+    from 
+  	<include refid="TableName"/>
+  	<where>
+  		buyer_id = #{username} and is_def = 1
+  	</where>
+  	
+  </select>
+  
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from <include refid="TableName"/>
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from <include refid="TableName"/>
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  
+  <insert id="insert" parameterType="org.ostenant.yoga.store.core.bean.user.Address" >
+    insert into <include refid="TableName"/> (id, buyer_id, name, 
+      city, addr, phone, 
+      is_def)
+    values (#{id,jdbcType=INTEGER}, #{buyerId,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, 
+      #{city,jdbcType=VARCHAR}, #{addr,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, 
+      #{isDef,jdbcType=INTEGER})
+  </insert>
+  
+  <!-- 使用生成key -->
+  <insert id="insertSelective" parameterType="org.ostenant.yoga.store.core.bean.user.Address" useGeneratedKeys="true" keyProperty="id">
+    insert into <include refid="TableName"/>
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="buyerId != null" >
+        buyer_id,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="city != null" >
+        city,
+      </if>
+      <if test="addr != null" >
+        addr,
+      </if>
+      <if test="phone != null" >
+        phone,
+      </if>
+      <if test="isDef != null" >
+        is_def,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="buyerId != null" >
+        #{buyerId,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="city != null" >
+        #{city,jdbcType=VARCHAR},
+      </if>
+      <if test="addr != null" >
+        #{addr,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null" >
+        #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="isDef != null" >
+        #{isDef,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  
+  
+  <update id="updateByPrimaryKeySelective" parameterType="org.ostenant.yoga.store.core.bean.user.Address" >
+    update <include refid="TableName"/>
+    <set >
+      <if test="buyerId != null" >
+        buyer_id = #{buyerId,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="city != null" >
+        city = #{city,jdbcType=VARCHAR},
+      </if>
+      <if test="addr != null" >
+        addr = #{addr,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null" >
+        phone = #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="isDef != null" >
+        is_def = #{isDef,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <update id="updateByPrimaryKey" parameterType="org.ostenant.yoga.store.core.bean.user.Address" >
+    update <include refid="TableName"/>
+    set buyer_id = #{buyerId,jdbcType=VARCHAR},
+      name = #{name,jdbcType=VARCHAR},
+      city = #{city,jdbcType=VARCHAR},
+      addr = #{addr,jdbcType=VARCHAR},
+      phone = #{phone,jdbcType=VARCHAR},
+      is_def = #{isDef,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+</mapper>
